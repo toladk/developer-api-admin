@@ -1,0 +1,15 @@
+.sideIcon {
+    color: #495057 !important;
+}
+
+.sideIcon.active {
+    color: #2AB57D !important;
+}
+
+.sideIcon:hover {
+    color: #2AB57D !important;
+}
+
+.my-pagination .ngx-pagination .current {
+    background: #2AB57D;
+}

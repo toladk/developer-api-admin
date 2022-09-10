@@ -1,0 +1,248 @@
+<div class="main-content">
+
+    <div class="page-content mt-4">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0 font-size-18">User Request List</h4>
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">User Request</a></li>
+                                <li class="breadcrumb-item active">User Request List</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <div class="row">
+                <div class="col-xl-12 col-md-12">
+                    <!-- card -->
+                    <div class="card card-h-100">
+
+                        <div class="col-xl-12 mt-4">
+                            <div class="" style="float: right; padding-right: 20px;">
+                                <select class="form-select" (change)="filterRequest($event)">
+                                  <option value="" selected disabled>Filter User Request</option>
+                                  <option value="all">All User Request</option>
+                                  <option value="pending">Pending User Request</option>
+                                  <option value="approved">Approved User Request</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- card body -->
+                        <div class="card-body">
+                            <ng-template #indicatorTemplate><i nz-icon nzType="loading" class="mt-5" style="font-size: 30px; color: #4CAF50; padding-top: 20px;" nzSpin="true"></i></ng-template>
+                            <nz-spin simple [nzIndicator]="indicatorTemplate" [nzSpinning]="isSpinning">
+                                <div class="">
+                                    <div class="table-responsive mb-4">
+                                        <table class="table align-middle datatable dt-responsive table-check nowrap" style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;" *ngIf="requestList.length > 0">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" style="width: 50px;">#
+                                                    </th>
+                                                    <th scope="col">Application Name</th>
+                                                    <th scope="col">Debit Account</th>
+                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Allowed</th>
+                                                    <th scope="col">Fintech</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let list of requestList | paginate: { itemsPerPage: 10, currentPage: p }; let r = index">
+                                                    <th scope="row">
+                                                        {{ r+1 }}
+                                                    </th>
+                                                    <td>
+                                                        {{ list.ApplicationName }}
+                                                    </td>
+                                                    <td>{{ list.DebitAccount }}</td>
+                                                    <td>{{ list.Description }}</td>
+                                                    <td>
+                                                        <div class="">
+                                                            <span class="badge rounded-pill badge-soft-success font-size-12 fw-medium" *ngIf="list.IsAllowed === true">True</span>
+                                                            <span class="badge rounded-pill badge-soft-danger font-size-12 fw-medium" *ngIf="list.IsAllowed === false">False</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="">
+                                                            <span class="badge rounded-pill badge-soft-success font-size-12 fw-medium" *ngIf="list.IsFinTech === true">Yes</span>
+                                                            <span class="badge rounded-pill badge-soft-danger font-size-12 fw-medium" *ngIf="list.IsFinTech === false">No</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <i class="mdi mdi-eye text-info font-size-24" (click)="viewRequest(list.Id)" style="margin-right: 8px; cursor: pointer;" nz-tooltip nzTooltipTitle="User Details"></i>
+                                                            <i class="mdi mdi-check text-success font-size-24" style="margin-right: 8px; cursor: pointer;" nz-tooltip nzTooltipTitle="Assign application to user" nz-popconfirm nzPopconfirmTitle="Are you sure to assign application to user?" (nzOnConfirm)="assignRequest(list.Id, list.UserId)"></i>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <table class="table align-middle datatable dt-responsive table-check nowrap" style="border-collapse: collapse; border-spacing: 0 8px; width: 100%;" *ngIf="requestList.length === 0">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" style="width: 50px;">#</th>
+                                                    <th scope="col">Application Name</th>
+                                                    <th scope="col">Debit Account</th>
+                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Allowed</th>
+                                                    <th scope="col">Fintech</th>
+                                                    <th style="width: 120px; min-width: 80px;">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="9" class="text-center">
+                                                        <div class="mt-3 mb-3">
+                                                            <h6 class="text-primary">No Data...</h6>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <!-- end table -->
+                                    </div>
+                                </div>
+                            </nz-spin>
+                            <div class="col-xl-12 mb-4">
+                                <div class="row">
+                                    <div class="col-6 col-md-6">
+                                        <p>Total User Request : {{ requestList.length }}</p>
+                                    </div>
+                                    <div class="col-6 col-md-6">
+                                        <div class="" style="float: right;">
+                                            <pagination-controls class="my-pagination" (pageChange)="p = $event"></pagination-controls>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- end card body -->
+                    </div>
+                    <!-- end card -->
+                </div>
+                <!-- end row-->
+            </div>
+            <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+    </div>
+
+</div>
+
+
+<!-- View User -->
+<nz-drawer [nzClosable]="false" [nzWidth]="700" [nzVisible]="visible" nzPlacement="right" nzTitle="User Request Details" (nzOnClose)="close()">
+    <ng-container *nzDrawerContent>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="nav flex-column nav-pills pricing-tab-box">
+                    <a class="nav-link mb-3" style="padding: 2px 15px 15px 15px;">
+                        <div class="d-flex align-items-center">
+                            <i class="bx bx-cabinet h3 mb-0 me-4"></i>
+                            <div class="flex-1">
+                                <h2 class="fw-medium mb-1"><span class="text-muted font-size-15">Application Name</span></h2>
+                                <p class="fw-normal mb-0 text-muted">{{ requestDetails?.ApplicationName }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="nav flex-column nav-pills pricing-tab-box">
+                    <a class="nav-link mb-3" style="padding: 2px 15px 15px 15px;">
+                        <div class="d-flex align-items-center">
+                            <i class="bx bx-card h3 mb-0 me-4"></i>
+                            <div class="flex-1">
+                                <h2 class="fw-medium mb-1"><span class="text-muted font-size-15">Debit Account</span></h2>
+                                <p class="fw-normal mb-0 text-muted">{{ requestDetails?.DebitAccount }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="nav flex-column nav-pills pricing-tab-box">
+                    <a class="nav-link mb-3" style="padding: 2px 15px 15px 15px;">
+                        <div class="d-flex align-items-center">
+                            <i class="bx bx-home h3 mb-0 me-4"></i>
+                            <div class="flex-1">
+                                <h2 class="fw-medium mb-1"><span class="text-muted font-size-15">Fintech</span></h2>
+                                <p class="fw-normal mb-0 text-muted">{{ requestDetails?.IsFinTech }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="nav flex-column nav-pills pricing-tab-box">
+                    <a class="nav-link mb-3" style="padding: 2px 15px 15px 15px;">
+                        <div class="d-flex align-items-center">
+                            <i class="bx bx-note h3 mb-0 me-4"></i>
+                            <div class="flex-1">
+                                <h2 class="fw-medium mb-1"><span class="text-muted font-size-15">Description</span></h2>
+                                <p class="fw-normal mb-0 text-muted">{{ requestDetails?.Description }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="nav flex-column nav-pills pricing-tab-box">
+                    <a class="nav-link mb-3" style="padding: 2px 15px 15px 15px;">
+                        <div class="d-flex align-items-center">
+                            <i class="bx bx-check h3 mb-0 me-4"></i>
+                            <div class="flex-1">
+                                <h2 class="fw-medium mb-1"><span class="text-muted font-size-15">Allowed</span></h2>
+                                <p class="fw-normal mb-0 text-muted">{{ requestDetails?.IsAllowed }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="nav flex-column nav-pills pricing-tab-box">
+                    <a class="nav-link mb-3" style="padding: 2px 15px 15px 15px;">
+                        <div class="d-flex align-items-center">
+                            <i class="bx bx-calendar h3 mb-0 me-4"></i>
+                            <div class="flex-1">
+                                <h2 class="fw-medium mb-1"><span class="text-muted font-size-15">Date Created</span></h2>
+                                <p class="fw-normal mb-0 text-muted">{{ requestDetails?.DateCreated | date }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="nav flex-column nav-pills pricing-tab-box">
+                    <a class="nav-link mb-3" style="padding: 2px 15px 15px 15px;">
+                        <div class="d-flex align-items-center">
+                            <i class="bx bx-list-check h3 mb-0 me-4"></i>
+                            <div class="flex-1">
+                                <h2 class="fw-medium mb-1"><span class="text-muted font-size-15">Allowed API</span></h2>
+                                <p class="fw-normal mb-0 text-muted">{{ requestDetails?.AllowedApiNames }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</nz-drawer>
